@@ -44,7 +44,7 @@ kwargs = dict(
     build_number=run_kwargs['build-number'],
     verbosity=run_kwargs['verbosity'],
     noop=run_kwargs['noop'],
-    packer_bin=run_kwargs['packer-binary']
+    packer_bin=run_kwargs['packer_binary']
 )
 if len(run_kwargs['script']) > 1:
     env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])
