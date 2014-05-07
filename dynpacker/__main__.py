@@ -16,6 +16,7 @@ parser.add_argument("package-source-revision", help="The revision of the code fr
 parser.add_argument("build-job", help="The name of the build job")
 parser.add_argument("build-number", help="The build number")
 parser.add_argument("--packer-binary", help="The path to packer. Defaults to 'packer'", default="packer")
+parser.add_argument("--install-command", help="Command to install requirements. Defaults to 'pip install -r requirements.txt'", default="pip install -r requirements.txt")
 parser.add_argument("-s", "--script", help="Script to run with upstart, e.g. python manage.py runserver", action='append')
 parser.add_argument("-d", "--deployment-name", help="Name of the environment, is paired with scripts", action='append')
 
@@ -44,7 +45,8 @@ kwargs = dict(
     build_number=run_kwargs['build-number'],
     verbosity=run_kwargs['verbosity'],
     noop=run_kwargs['noop'],
-    packer_bin=run_kwargs['packer_binary']
+    packer_bin=run_kwargs['packer_binary'],
+    install_command=run_kwargs['install_command']
 )
 if len(run_kwargs['script']) > 1:
     env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])

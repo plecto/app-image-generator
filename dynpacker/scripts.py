@@ -48,7 +48,10 @@ end script
     }
 
 
-def packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None, build_number=None, files=None, deployments=None):
+def packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
+                build_number=None, files=None, deployments=None, install_command=None):
+    if not install_command:
+        install_command = "pip install -r requirements.txt"
     if not files:
         files = []
     if not deployments:
@@ -94,7 +97,7 @@ def packer_json(base_ami, version, revision, git_revision, deployment_file, app,
               "cp /tmp/app.tar.gz .",
               "tar xvf app.tar.gz",
               "rm app.tar.gz",
-              "pip install -r requirements.txt"
+              install_command
           ],
           "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo {{ .Path }}",
         }] + [{
@@ -106,14 +109,16 @@ def packer_json(base_ami, version, revision, git_revision, deployment_file, app,
     })
 
 
-def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None, build_number=None, files=None, deployments=None, verbosity=0, noop=False, **kwargs):
+def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
+        build_number=None, files=None, deployments=None, verbosity=0, noop=False, install_command=None, **kwargs):
     if 'packer_bin' in kwargs:
         packer_bin = kwargs.pop('packer_bin')
     else:
         packer_bin = "packer"
     if not files:
         files = []
-    packer_input = packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name, build_job, build_number, files=files, deployments=deployments)
+    packer_input = packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name, build_job,
+                               build_number, files=files, deployments=deployments, install_command=install_command)
     if verbosity > 0:
         print "PACKER JSON"
         print "==========="
