@@ -41,7 +41,7 @@ script
   . /tmp/envvars
   exec %(script)s >> /var/log/app/app.log 2>&1
 end script
-    """.replace("$", "\$").replace('`', '') % {
+    """.replace("$", "\$").replace('`', '\`') % {
         'description': description,
         'author': author,
         'script': script,
