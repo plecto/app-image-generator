@@ -77,10 +77,10 @@ def packer_json(base_ami, version, revision, git_revision, deployment_file, app,
             "instance_type": "t1.micro",
             "ssh_username": "ubuntu",
 
-            "ami_name": "%s-{{user `version`}}-{{user `revision`}}-x86_64-{{isotime | clean_ami_name}}" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}-%s" % name),
-            "ami_description": "name=%s, arch=x86_64, ancestor_name={{user `base_ami_name`}}, ancestor_id={{user `base_ami`}}, ancestor_version=" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}-%s" % name),
+            "ami_name": "%s-{{user `version`}}-{{user `revision`}}-x86_64-{{isotime | clean_ami_name}}" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}_%s" % name),
+            "ami_description": "name=%s, arch=x86_64, ancestor_name={{user `base_ami_name`}}, ancestor_id={{user `base_ami`}}, ancestor_version=" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}_%s" % name),
             "tags": {
-              "appversion": "%s-{{user `version`}}-{{user `revision`}}.h{{ user `build_number` }}/{{user `build_job`}}/{{ user `build_number` }}" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}-%s" % name)
+              "appversion": "%s-{{user `version`}}-{{user `revision`}}.h{{ user `build_number` }}/{{user `build_job`}}/{{ user `build_number` }}" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}_%s" % name)
             }
 
        } for name in deployments],
