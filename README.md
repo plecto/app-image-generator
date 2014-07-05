@@ -9,3 +9,8 @@ python -m dynpacker <parent ami> <name of parent ami> <ami major version>-<ami m
 -d <process type, e.g. web> -s <script to run, e.g. "python manage.py run_gunicorn -b 0.0.0.0:5000 -w 4"> \
 -d <next process type> -s <script to run> -v
 ```
+
+Speed up pip install
+--------------------
+
+Check out [wheelshop](https://github.com/KristianOellegaard/wheelshop#using-with-dynpacker)
