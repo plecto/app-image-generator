@@ -49,7 +49,9 @@ end script
 
 
 def packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
-                build_number=None, files=None, deployments=None, install_command=None):
+                build_number=None, files=None, deployments=None, install_command=None, extra_account_ids=None):
+    if not extra_account_ids:
+        extra_account_ids = []
     if not install_command:
         install_command = "pip install -r requirements.txt"
     if not files:
@@ -74,6 +76,7 @@ def packer_json(base_ami, version, revision, git_revision, deployment_file, app,
             "name": name,
             "region": "eu-west-1",
             "source_ami": "{{user `base_ami`}}",
+            "ami_users": extra_account_ids,
             "instance_type": "t1.micro",
             "ssh_username": "ubuntu",
 
@@ -110,7 +113,8 @@ def packer_json(base_ami, version, revision, git_revision, deployment_file, app,
 
 
 def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
-        build_number=None, files=None, deployments=None, verbosity=0, noop=False, install_command=None, **kwargs):
+        build_number=None, files=None, deployments=None, verbosity=0, noop=False, install_command=None,
+        extra_account_ids=None, **kwargs):
     if 'packer_bin' in kwargs:
         packer_bin = kwargs.pop('packer_bin')
     else:
@@ -118,7 +122,8 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
     if not files:
         files = []
     packer_input = packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name, build_job,
-                               build_number, files=files, deployments=deployments, install_command=install_command)
+                               build_number, files=files, deployments=deployments, install_command=install_command,
+                               extra_account_ids=extra_account_ids)
     if verbosity > 0:
         print "PACKER JSON"
         print "==========="

@@ -19,6 +19,7 @@ parser.add_argument("--packer-binary", help="The path to packer. Defaults to 'pa
 parser.add_argument("--install-command", help="Command to install requirements. Defaults to 'pip install -r requirements.txt'", default="pip install -r requirements.txt")
 parser.add_argument("-s", "--script", help="Script to run with upstart, e.g. python manage.py runserver", action='append')
 parser.add_argument("-d", "--deployment-name", help="Name of the environment, is paired with scripts", action='append')
+parser.add_argument("-a", "--aws-account-id", help="AWS Account ids for extra users that have read-only access", action='append')
 
 args = parser.parse_args()
 
@@ -46,7 +47,8 @@ kwargs = dict(
     verbosity=run_kwargs['verbosity'],
     noop=run_kwargs['noop'],
     packer_bin=run_kwargs['packer_binary'],
-    install_command=run_kwargs['install_command']
+    install_command=run_kwargs['install_command'],
+    extra_account_ids=run_kwargs['aws_account_id']
 )
 if len(run_kwargs['script']) > 1:
     env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])
