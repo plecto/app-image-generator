@@ -20,6 +20,7 @@ parser.add_argument("--install-command", help="Command to install requirements. 
 parser.add_argument("-s", "--script", help="Script to run with upstart, e.g. python manage.py runserver", action='append')
 parser.add_argument("-d", "--deployment-name", help="Name of the environment, is paired with scripts", action='append')
 parser.add_argument("-a", "--aws-account-id", help="AWS Account ids for extra users that have read-only access", action='append')
+parser.add_argument("--build-instance-type", help="The AWS instance type used for building the image", default='t1.micro')
 
 args = parser.parse_args()
 
@@ -48,7 +49,8 @@ kwargs = dict(
     noop=run_kwargs['noop'],
     packer_bin=run_kwargs['packer_binary'],
     install_command=run_kwargs['install_command'],
-    extra_account_ids=run_kwargs['aws_account_id']
+    extra_account_ids=run_kwargs['aws_account_id'],
+    build_instance_type=run_kwargs['build_instance_type']
 )
 if len(run_kwargs['script']) > 1:
     env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])

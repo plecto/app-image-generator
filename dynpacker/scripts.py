@@ -49,9 +49,12 @@ end script
 
 
 def packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
-                build_number=None, files=None, deployments=None, install_command=None, extra_account_ids=None):
+                build_number=None, files=None, deployments=None, install_command=None, extra_account_ids=None,
+                instance_type=None):
     if not extra_account_ids:
         extra_account_ids = []
+    if not instance_type:
+        instance_type = "t1.micro"
     if not install_command:
         install_command = "pip install -r requirements.txt"
     if not files:
@@ -77,7 +80,7 @@ def packer_json(base_ami, version, revision, git_revision, deployment_file, app,
             "region": "eu-west-1",
             "source_ami": "{{user `base_ami`}}",
             "ami_users": extra_account_ids,
-            "instance_type": "t1.micro",
+            "instance_type": instance_type,
             "ssh_username": "ubuntu",
 
             "ami_name": "%s-{{user `version`}}-{{user `revision`}}-x86_64-{{isotime | clean_ami_name}}" % ("{{user `app`}}" if name == 'amazon-ebs' else "{{user `app`}}_%s" % name),
@@ -123,7 +126,7 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
         files = []
     packer_input = packer_json(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name, build_job,
                                build_number, files=files, deployments=deployments, install_command=install_command,
-                               extra_account_ids=extra_account_ids)
+                               extra_account_ids=extra_account_ids, instance_type=kwargs.get('build_instance_type'))
     if verbosity > 0:
         print "PACKER JSON"
         print "==========="
