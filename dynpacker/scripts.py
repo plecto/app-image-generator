@@ -135,8 +135,16 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
     packer_cmd = [packer_bin, "build", "-"]
     if not noop:
         p = Popen(packer_cmd, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        std_out, std_err = p.communicate(input=packer_input)
-        print(std_out)
+        try:
+            p.stdin.write(packer_input)
+            p.stdin.close()
+            output = ''
+            for line in iter(p.stdout.readline, b''):
+                output += line
+                print line,  # Don't add a line break, as it's already provided by the output
+            p.stdout.close()
+        except KeyboardInterrupt:
+            p.kill()
     else:
         print "NOOP: ",  " ".join(packer_cmd)
 
