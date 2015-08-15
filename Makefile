@@ -9,7 +9,7 @@ build:
 	- git stash pop
 
 upload:
-	python manage.py sdist upload
+	python setup.py sdist upload
 
 git-release:
 	git add ${PROJECT}/__init__.py
