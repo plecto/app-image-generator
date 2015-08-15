@@ -1,6 +1,9 @@
 import argparse
 from app_image_generator.scripts import run
 from app_image_generator.upstart import upstart_script_template
+import sys
+
+print " ".join(sys.argv)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("base-ami", help="AMI to build on top of, in the format ami-XXXXX")
