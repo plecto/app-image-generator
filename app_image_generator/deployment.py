@@ -69,15 +69,20 @@ class Deployment(object):
             ]
         }
 
+        extra_ami_config = {}
+        if self.builder_type == "amazon-ebs":
+            extra_ami_config.update({
+                "instance_type": self.instance_type,
+                "ssh_username": "ubuntu",
+            })
+
         for name in self.amis:
-            cfg['builders'].append({
+            ami_config = {
                 "type": self.builder_type,
                 "name": name,
                 "region": "eu-west-1",
                 "source_ami": "{{user `base_ami`}}",
                 "ami_users": self.extra_account_ids,
-                "instance_type": self.instance_type,
-                "ssh_username": "ubuntu",
 
                 "ami_name": "%s-{{user `version`}}-{{user `revision`}}-x86_64-{{isotime | clean_ami_name}}" % ("{{user `app`}}" if name == 'default' else "{{user `app`}}_%s" % name),
                 "ami_description": "name=%s, arch=x86_64, ancestor_name={{user `base_ami_name`}}, ancestor_id={{user `base_ami`}}, ancestor_version=" % ("{{user `app`}}" if name == 'default' else "{{user `app`}}_%s" % name),
@@ -85,7 +90,9 @@ class Deployment(object):
                   "appversion": "%s-{{user `version`}}-{{user `revision`}}.h{{ user `build_number` }}/{{user `build_job`}}/{{ user `build_number` }}" % ("{{user `app`}}" if name == 'default' else "{{user `app`}}_%s" % name)
                 }
 
-           })
+            }
+            ami_config.update(extra_ami_config)
+            cfg['builders'].append(ami_config)
 
         for file_dict in self.files:
             cfg['provisioners'].append({
