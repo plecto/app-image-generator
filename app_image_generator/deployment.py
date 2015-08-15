@@ -100,13 +100,15 @@ class Deployment(object):
                 "echo '#!/bin/sh' > /usr/sbin/policy-rc.d",
                 "echo 'exit 101' >> /usr/sbin/policy-rc.d",
                 "chmod a+x /usr/sbin/policy-rc.d"
-            ]
+            ],
+            "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo {{ .Path }}"
         })
         cfg['provisioners'].append({
             "type": "shell",
             "inline": [
                 "rm -f /usr/sbin/policy-rc.d"
-            ]
+            ],
+            "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo {{ .Path }}"
         })
 
         return json.dumps(cfg)
