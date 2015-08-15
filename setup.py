@@ -14,7 +14,7 @@ setup(
     install_requires=[],
     entry_points={
         'console_scripts': [
-            'app-image-generator = app_image_generator.__main__',
+            'app-image-generator = app_image_generator.cli:main',
         ]
     },
 )
