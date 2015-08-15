@@ -55,7 +55,8 @@ kwargs = dict(
     packer_bin=run_kwargs['packer_binary'],
     install_command=run_kwargs['install_command'],
     extra_account_ids=run_kwargs['aws_account_id'],
-    build_instance_type=run_kwargs['build_instance_type']
+    build_instance_type=run_kwargs['build_instance_type'],
+    builder_type=run_kwargs['builder_type']
 )
 if len(run_kwargs['script']) > 1:  # Multiple upstart-scripts
     env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])

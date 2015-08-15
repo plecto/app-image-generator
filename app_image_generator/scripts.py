@@ -6,7 +6,7 @@ from app_image_generator.deployment import Deployment
 
 def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
         build_number=None, files=None, amis=None, verbosity=0, noop=False, install_command=None,
-        extra_account_ids=None, **kwargs):
+        extra_account_ids=None, builder_type=None, **kwargs):
     if 'packer_bin' in kwargs:
         packer_bin = kwargs.pop('packer_bin')
     else:
@@ -15,7 +15,8 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
         files = []
     deployment = Deployment(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name, build_job,
                             build_number, files=files, amis=amis, install_command=install_command,
-                            extra_account_ids=extra_account_ids, instance_type=kwargs.get('build_instance_type')
+                            extra_account_ids=extra_account_ids, instance_type=kwargs.get('build_instance_type'),
+                            builder_type=builder_type
     )
     packer_input = deployment.packer_json()
     if verbosity > 0:

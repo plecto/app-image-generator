@@ -4,7 +4,7 @@ import json
 class Deployment(object):
     def __init__(self, base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
                 build_number=None, files=None, amis=None, install_command=None, extra_account_ids=None,
-                instance_type=None, builder_type="amazon-ebs"):
+                instance_type=None, builder_type=None):
         self.base_ami = base_ami
         self.version = version
         self.revision = revision
@@ -29,6 +29,8 @@ class Deployment(object):
         if not instance_type:
             instance_type = "t1.micro"
         self.instance_type = instance_type
+        if not builder_type:
+            builder_type = "amazon-ebs"
         self.builder_type = builder_type
 
     def packer_json(self):
