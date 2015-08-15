@@ -1,10 +1,8 @@
 import argparse
-from dynpacker.scripts import run, upstart_script
+from app_image_generator.scripts import run
+from app_image_generator.upstart import upstart_script_template
 
-parser = argparse.ArgumentParser(prog="python -m dynpacker")
-parser.add_argument("-v", "--verbosity", action="count", help="increase output verbosity")
-parser.add_argument("-n", "--noop", help="Don't run packer, but print the command it would have run", action='store_true', default=False)
-# base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None, build_number=None
+parser = argparse.ArgumentParser()
 parser.add_argument("base-ami", help="AMI to build on top of, in the format ami-XXXXX")
 parser.add_argument("base-ami-name", help="Name of the base ami")
 parser.add_argument("base-ami-version", help="Version of the bae ami")
@@ -15,12 +13,16 @@ parser.add_argument("package-file", help="A tar.gz with the application code to 
 parser.add_argument("package-source-revision", help="The revision of the code from e.g. GIT")
 parser.add_argument("build-job", help="The name of the build job")
 parser.add_argument("build-number", help="The build number")
+parser.add_argument("-v", "--verbosity", action="count", help="increase output verbosity")
+parser.add_argument("-n", "--noop", help="Don't run packer, but print the command it would have run", action='store_true', default=False)
 parser.add_argument("--packer-binary", help="The path to packer. Defaults to 'packer'", default="packer")
 parser.add_argument("--install-command", help="Command to install requirements. Defaults to 'pip install -r requirements.txt'", default="pip install -r requirements.txt")
 parser.add_argument("-s", "--script", help="Script to run with upstart, e.g. python manage.py runserver", action='append')
 parser.add_argument("-d", "--deployment-name", help="Name of the environment, is paired with scripts", action='append')
 parser.add_argument("-a", "--aws-account-id", help="AWS Account ids for extra users that have read-only access", action='append')
 parser.add_argument("--build-instance-type", help="The AWS instance type used for building the image", default='t1.micro')
+parser.add_argument('--single-image', dest='single_image', action='store_true', default=False, help="Rather than generating an image per script, put all scripts in the same image")
+parser.add_argument("--builder-type", help="Advanced: Choose between amazon-ebs and amazon-chroot", default='amazon-ebs')
 
 args = parser.parse_args()
 
@@ -52,20 +54,32 @@ kwargs = dict(
     extra_account_ids=run_kwargs['aws_account_id'],
     build_instance_type=run_kwargs['build_instance_type']
 )
-if len(run_kwargs['script']) > 1:
+if len(run_kwargs['script']) > 1:  # Multiple upstart-scripts
     env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])
-    kwargs['deployments'] = [deployment for deployment, f in env_script_dict]
+    if run_kwargs['single_image']:  # Put all upstart-files in the same AMI
+        run(files=[
+            {
+                'content': upstart_script_template(f, "-".join([kwargs['app'], environment]), kwargs.get('maintainer', 'Unknown')),
+                'filename': "/etc/init/%s.conf" % "-".join([kwargs['app'], environment]),
+            }
+            for environment, f in env_script_dict],
+            **kwargs
+        )
+    else:  # Put all upstart-files in separate AMIs
+        kwargs['amis'] = [deployment for deployment, f in env_script_dict]
+        run(files=[
+            {
+                'content': upstart_script_template(f, "-".join([kwargs['app'], environment]), kwargs.get('maintainer', 'Unknown')),
+                'filename': "/etc/init/%s.conf" % "-".join([kwargs['app'], environment]),
+                'deployment': environment,
+            }
+            for environment, f in env_script_dict],
+            **kwargs
+        )
+else:  # Single script and single AMI!
     run(files=[
         {
-            'content': upstart_script(f, "-".join([kwargs['app'], environment]), kwargs.get('maintainer', 'Unknown')),
-            'filename': "/etc/init/%s.conf" % "-".join([kwargs['app'], environment]),
-            'deployment': environment,
-        }
-        for environment, f in env_script_dict], **kwargs)
-else:
-    run(files=[
-        {
-            'content': upstart_script(kwargs['script'][0], kwargs['app'], kwargs.get('maintainer', 'Unknown')),
+            'content': upstart_script_template(kwargs['script'][0], kwargs['app'], kwargs.get('maintainer', 'Unknown')),
             'filename': "/etc/init/%s.conf" % kwargs['app']
         }
     ], **kwargs)

@@ -1,9 +1,9 @@
 # encoding: utf-8
 from setuptools import setup, find_packages
-from dynpacker import version
+from app_image_generator import version
 
 setup(
-    name = 'dynpacker',
+    name = 'app-image-generator',
     version = version,
     description = '',
     author = u'Kristian Øllegaard',
@@ -12,4 +12,9 @@ setup(
     include_package_data = True,
     packages = find_packages(exclude=[]),
     install_requires=[],
+    entry_points={
+        'console_scripts': [
+            'app-image-generator = app_image_generator.__main__',
+        ]
+    },
 )
