@@ -1,4 +1,5 @@
 import argparse
+from app_image_generator.plugins.slack import SlackPlugin
 from app_image_generator.scripts import run
 from app_image_generator.upstart import upstart_script_template
 import sys
@@ -26,6 +27,7 @@ parser.add_argument("-a", "--aws-account-id", help="AWS Account ids for extra us
 parser.add_argument("--build-instance-type", help="The AWS instance type used for building the image", default='t1.micro')
 parser.add_argument('--single-image', dest='single_image', action='store_true', default=False, help="Rather than generating an image per script, put all scripts in the same image")
 parser.add_argument("--builder-type", help="Advanced: Choose between amazon-ebs and amazon-chroot", default='amazon-ebs')
+parser.add_argument("-p", "--plugins", help="Plugins to execute on finish. [slack]", action='append')
 
 
 def main():
@@ -39,6 +41,11 @@ def main():
     elif len(run_kwargs['script']) == 0:
         print "Please provide at least one script"
         exit(1)
+
+    plugins = []
+    for plugin in run_kwargs['plugins']:
+        if plugin == 'slack':
+            plugins.append(SlackPlugin())
 
     kwargs = dict(
         script=run_kwargs['script'],
@@ -58,7 +65,8 @@ def main():
         install_command=run_kwargs['install_command'],
         extra_account_ids=run_kwargs['aws_account_id'],
         build_instance_type=run_kwargs['build_instance_type'],
-        builder_type=run_kwargs['builder_type']
+        builder_type=run_kwargs['builder_type'],
+        plugins=plugins
     )
     if len(run_kwargs['script']) > 1:  # Multiple upstart-scripts
         env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])
@@ -83,9 +91,10 @@ def main():
                 **kwargs
             )
     else:  # Single script and single AMI!
-        run(files=[
+        return_code = run(files=[
             {
                 'content': upstart_script_template(kwargs['script'][0], kwargs['app'], kwargs.get('maintainer', 'Unknown')),
                 'filename': "/etc/init/%s.conf" % kwargs['app']
             }
         ], **kwargs)
+        exit(return_code)

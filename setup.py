@@ -11,7 +11,7 @@ setup(
     zip_safe=False,
     include_package_data = True,
     packages = find_packages(exclude=[]),
-    install_requires=[],
+    install_requires=['slacker'],
     entry_points={
         'console_scripts': [
             'app-image-generator = app_image_generator.cli:main',

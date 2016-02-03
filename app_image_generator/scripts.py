@@ -6,7 +6,7 @@ from app_image_generator.deployment import Deployment
 
 def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
         build_number=None, files=None, amis=None, verbosity=0, noop=False, install_command=None,
-        extra_account_ids=None, builder_type=None, **kwargs):
+        extra_account_ids=None, builder_type=None, plugins=None, **kwargs):
     if 'packer_bin' in kwargs:
         packer_bin = kwargs.pop('packer_bin')
     else:
@@ -27,15 +27,26 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
     packer_cmd = [packer_bin, "build", "-"]
     if not noop:
         p = Popen(packer_cmd, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        output = ''
         try:
             p.stdin.write(packer_input)
             p.stdin.close()
-            output = ''
             for line in iter(p.stdout.readline, b''):
                 output += line
                 print line,  # Don't add a line break, as it's already provided by the output
             p.stdout.close()
+            return_code = p.wait()
+
         except KeyboardInterrupt:
             p.kill()
+            return_code = 1
+
+        for plugin in plugins:
+            if return_code == 0:
+                plugin.build_succeeded(output)
+            else:
+                plugin.build_failed(output)
+
+        return return_code
     else:
         print "NOOP: ",  " ".join(packer_cmd)
