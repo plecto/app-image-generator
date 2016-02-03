@@ -43,9 +43,10 @@ def main():
         exit(1)
 
     plugins = []
-    for plugin in run_kwargs['plugins']:
-        if plugin == 'slack':
-            plugins.append(SlackPlugin())
+    if run_kwargs['plugins']:
+        for plugin in run_kwargs['plugins']:
+            if plugin == 'slack':
+                plugins.append(SlackPlugin())
 
     kwargs = dict(
         script=run_kwargs['script'],
