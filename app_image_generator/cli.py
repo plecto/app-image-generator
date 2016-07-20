@@ -1,5 +1,6 @@
 import argparse
 from app_image_generator.plugins.slack import SlackPlugin
+from app_image_generator.plugins.spinnaker import SpinnakerPlugin
 from app_image_generator.scripts import run
 from app_image_generator.upstart import upstart_script_template
 import sys
@@ -47,6 +48,8 @@ def main():
         for plugin in run_kwargs['plugins']:
             if plugin == 'slack':
                 plugins.append(SlackPlugin())
+            elif plugin == 'spinnaker':
+                plugins.append(SpinnakerPlugin())
 
     kwargs = dict(
         script=run_kwargs['script'],
