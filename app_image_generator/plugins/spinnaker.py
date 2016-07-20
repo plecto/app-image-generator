@@ -21,5 +21,8 @@ class SpinnakerPlugin(BasePlugin):
                     "parameters": {"prebaked_ami": image_id},
                     "user": "[circle]"}
                 ),
-                auth=(os.environ.get("SPINNAKER_USER"), os.environ.get("SPINNAKER_PASSWORD"))
+                auth=(os.environ.get("SPINNAKER_USER"), os.environ.get("SPINNAKER_PASSWORD")),
+                headers={
+                    'Content-Type': 'application/json'
+                }
             )
