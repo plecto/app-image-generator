@@ -1,8 +1,8 @@
+from __future__ import print_function
 import json
 from subprocess import Popen, PIPE, STDOUT
 import pprint
 from app_image_generator.deployment import Deployment
-from __future__ import print_function
 
 def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
         build_number=None, files=None, amis=None, verbosity=0, noop=False, install_command=None,
