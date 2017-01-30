@@ -33,7 +33,7 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
             p.stdin.close()
             for line in iter(p.stdout.readline, b''):
                 output += line
-                print(line, end="", flush=True)  # Don't add a line break, as it's already provided by the output
+                print(line, flush=True)  # Don't add a line break, as it's already provided by the output
             p.stdout.close()
             return_code = p.wait()
 
