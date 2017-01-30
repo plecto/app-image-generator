@@ -29,7 +29,7 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
         p = Popen(packer_cmd, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         output = ''
         try:
-            p.stdin.write(packer_input)
+            p.stdin.write(str.encode(packer_input))
             p.stdin.close()
             for line in iter(p.stdout.readline, b''):
                 output += line
