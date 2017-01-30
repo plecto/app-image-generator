@@ -27,7 +27,7 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
     packer_cmd = [packer_bin, "build", "-"]
     if not noop:
         p = Popen(packer_cmd, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        output = ''
+        output = b''
         try:
             p.stdin.write(str.encode(packer_input))
             p.stdin.close()
