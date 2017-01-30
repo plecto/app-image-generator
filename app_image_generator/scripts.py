@@ -19,7 +19,7 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
                             builder_type=builder_type
     )
     packer_input = deployment.packer_json()
-    if verbosity > 0:
+    if verbosity and verbosity > 0:
         print("PACKER JSON")
         print("===========")
         pprint.pprint(json.loads(packer_input))
