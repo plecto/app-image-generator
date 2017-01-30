@@ -2,7 +2,7 @@ import json
 from subprocess import Popen, PIPE, STDOUT
 import pprint
 from app_image_generator.deployment import Deployment
-
+from __future__ import print_function
 
 def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
         build_number=None, files=None, amis=None, verbosity=0, noop=False, install_command=None,
@@ -20,10 +20,10 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
     )
     packer_input = deployment.packer_json()
     if verbosity > 0:
-        print "PACKER JSON"
-        print "==========="
+        print("PACKER JSON")
+        print("===========")
         pprint.pprint(json.loads(packer_input))
-        print "==========="
+        print("===========")
     packer_cmd = [packer_bin, "build", "-"]
     if not noop:
         p = Popen(packer_cmd, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
@@ -33,7 +33,7 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
             p.stdin.close()
             for line in iter(p.stdout.readline, b''):
                 output += line
-                print line,  # Don't add a line break, as it's already provided by the output
+                print(line, end="", flush=True)  # Don't add a line break, as it's already provided by the output
             p.stdout.close()
             return_code = p.wait()
 
@@ -49,4 +49,4 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
 
         return return_code
     else:
-        print "NOOP: ",  " ".join(packer_cmd)
+        print("NOOP: ",  " ".join(packer_cmd))
