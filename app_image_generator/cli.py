@@ -5,7 +5,7 @@ from app_image_generator.scripts import run
 from app_image_generator.upstart import upstart_script_template
 import sys
 
-print " ".join(sys.argv)
+print(" ".join(sys.argv))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("base-ami", help="AMI to build on top of, in the format ami-XXXXX")
@@ -37,10 +37,10 @@ def main():
     run_kwargs = dict(args._get_kwargs())
 
     if len(run_kwargs['script']) > 1 and len(run_kwargs['deployment_name']) != len(run_kwargs['script']):
-        print "Please provide the same number of deployment name and scripts, when using multiple scripts"
+        print("Please provide the same number of deployment name and scripts, when using multiple scripts")
         exit(1)
     elif len(run_kwargs['script']) == 0:
-        print "Please provide at least one script"
+        print("Please provide at least one script")
         exit(1)
 
     plugins = []
