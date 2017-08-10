@@ -12,7 +12,7 @@ class SpinnakerPlugin(BasePlugin):
     SPINNAKER_USER: basicauthuser
     SPINNAKER_PASSWORD: basicauthpw
     """
-    def build_succeeded(self, output):
+    def build_succeeded(self, app, output):
         for image_name, image_id in self.get_images_from_output(output).items():
             requests.post(
                 "%s/%s" % (os.environ.get("SPINNAKER_PIPELINE_APP_URL"), image_name),

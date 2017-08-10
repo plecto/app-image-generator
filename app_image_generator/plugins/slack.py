@@ -7,8 +7,8 @@ class SlackPlugin(BasePlugin):
     def __init__(self):
         self.slacker = Slacker(os.environ.get("SLACK_TOKEN"))
 
-    def build_succeeded(self, output):
-        self.slacker.chat.post_message('#dev', 'New images available:', username='app-image-generator', attachments=[
+    def build_succeeded(self, app, output):
+        self.slacker.chat.post_message('#dev', 'New %s images available:' % app, username='app-image-generator', attachments=[
             {
                 "fields": [
                     {
@@ -20,8 +20,8 @@ class SlackPlugin(BasePlugin):
             }
         ])
 
-    def build_failed(self, output):
-        self.slacker.chat.post_message('#dev', 'Build failed!!!!', username='app-image-generator', attachments=[
+    def build_failed(self, app, output):
+        self.slacker.chat.post_message('#dev', 'Building %s failed!!!!' % app, username='app-image-generator', attachments=[
             {
                 "fields": [
                     {

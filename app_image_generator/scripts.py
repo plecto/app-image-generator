@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE, STDOUT
 import pprint
 from app_image_generator.deployment import Deployment
 
+
 def run(base_ami, version, revision, git_revision, deployment_file, app, base_ami_name=None, build_job=None,
         build_number=None, files=None, amis=None, verbosity=0, noop=False, install_command=None,
         extra_account_ids=None, builder_type=None, plugins=None, **kwargs):
@@ -46,9 +47,9 @@ def run(base_ami, version, revision, git_revision, deployment_file, app, base_am
 
         for plugin in plugins:
             if return_code == 0:
-                plugin.build_succeeded(output)
+                plugin.build_succeeded(app, output)
             else:
-                plugin.build_failed(output)
+                plugin.build_failed(app, output)
 
         return return_code
     else:
