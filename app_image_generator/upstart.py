@@ -30,6 +30,7 @@ respawn
 respawn limit 1000 1
 console log
 chdir /app/
+limit nofile 65536 65536
 
 script
   logger -i -t "$UPSTART_JOB" "Starting app"
