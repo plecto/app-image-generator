@@ -23,8 +23,12 @@ pre-start script
   size=`ls -lah /credentials/settings.yml | awk '{ print $5 }'`
   logger -i -t "$UPSTART_JOB" "Found /credentials/settings.yml, size: ${size}"
 end script
+pre-stop script
+    logger -i -t "$UPSTART_JOB" "Stopping app"
+end script
 
 start on runlevel [2345]
+stop on runlevel [!2345]
 
 respawn
 respawn limit 1000 1
