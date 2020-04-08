@@ -95,9 +95,12 @@ class Deployment(object):
             cfg['builders'].append(ami_config)
 
         for file_dict in self.files:
+            inlines = [
+                "cat > {filename} << EOF\n{content}\nEOF".format(**file_dict)
+            ] + ["systemctl enable {filename}".format(**file_dict)] if file_dict['type'] == 'systemd' else []
             cfg['provisioners'].append({
                 "type": "shell",
-                "inline": ["cat > %(filename)s << EOF\n%(content)s\nEOF" % file_dict],
+                "inline": inlines,
                 "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo {{ .Path }}",
                 "only": [file_dict.get('deployment', self.amis[0])]
             })

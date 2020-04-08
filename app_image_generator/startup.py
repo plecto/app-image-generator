@@ -46,3 +46,25 @@ end script
         'author': author,
         'script': script,
     }
+
+
+def systemd_script_template(script, script_name, author):
+    return """
+[Unit]
+Description="%(script_name)s "%(author)s"
+StartLimitIntervalSec=0
+After=network.target
+
+[Service]
+Restart=always
+ExecStartPre=/bin/bash -ce "mkdir -p /var/log/app/ && chown -R root /var/log/app && while [ ! -f "/tmp/envvars" ] || [ ! -f "/credentials/settings.yml" ]; do sleep 5; done; echo 'Found envvars...'"
+ExecStart=/bin/bash -ce "source /tmp/envvars && python /app/manage.py run_services  >> /var/log/app/%(script_name)s.log 2>&1"
+
+[Install]
+WantedBy=multi-user.target
+    """.replace("$", "\$").replace('`', '\`') % {
+        'script_name': script_name,
+        'author': author, 
+        'script': script,
+    }
+
