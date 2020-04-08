@@ -9,7 +9,10 @@ build:
 	- git stash pop
 
 upload:
-	python setup.py sdist upload
+	git stash
+	python setup.py sdist
+	twine upload dist/app-image-generator-`cat ${PROJECT}/__init__.py | awk -F '("|")' '{ print($$2)}'`.tar.gz
+	- git stash pop
 
 git-release:
 	git add ${PROJECT}/__init__.py
