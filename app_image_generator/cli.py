@@ -2,7 +2,7 @@ import argparse
 from app_image_generator.plugins.slack import SlackPlugin
 from app_image_generator.plugins.spinnaker import SpinnakerPlugin
 from app_image_generator.scripts import run
-from app_image_generator.startup import upstart_script_template
+from app_image_generator.startup import upstart_script_template, systemd_script_template
 import sys
 
 print(" ".join(sys.argv))
@@ -97,7 +97,7 @@ def main():
     else:  # Single script and single AMI!
         return_code = run(files=[
             {
-                'content': upstart_script_template(kwargs['script'][0], kwargs['app'], kwargs.get('maintainer', 'Unknown')),
+                'content': systemd_script_template(kwargs['script'][0], kwargs['app'], kwargs.get('maintainer', 'Unknown')),
                 'filename': "/etc/systemd/system/%s" % kwargs['app'],
                 'type': 'systemd',
             }

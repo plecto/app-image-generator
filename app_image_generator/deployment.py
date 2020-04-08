@@ -97,7 +97,7 @@ class Deployment(object):
         for file_dict in self.files:
             inlines = [
                 "cat > {filename} << EOF\n{content}\nEOF".format(**file_dict)
-            ] + ["systemctl enable {filename}".format(**file_dict)] if file_dict['type'] == 'systemd' else []
+            ] + ["systemctl enable {filename}".format(**file_dict)] if file_dict.get('type') == 'systemd' else []
             cfg['provisioners'].append({
                 "type": "shell",
                 "inline": inlines,
