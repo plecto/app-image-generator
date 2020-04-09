@@ -98,8 +98,8 @@ def main():
         return_code = run(files=[
             {
                 'content': systemd_script_template(kwargs['script'][0], kwargs['app'], kwargs.get('maintainer', 'Unknown')),
-                'filename': "/etc/systemd/system/%s" % kwargs['app'],
-                'type': 'systemd',
+                'filename': "/etc/systemd/system/%s.service" % kwargs['app'],
+                'systemd_service_name': kwargs['app'],
             }
         ], **kwargs)
         exit(return_code)
