@@ -58,7 +58,7 @@ After=network.target
 Restart=always
 WorkingDirectory=/app
 ExecStartPre=/bin/bash -ce "mkdir -p /var/log/app/ && chown -R root /var/log/app && while [ ! -f '/tmp/envvars' ] || [ ! -f '/credentials/settings.yml' ]; do sleep 5; done; echo 'Found envvars...'"
-ExecStart=/bin/bash -ce "source /tmp/envvars && python /app/manage.py run_services >> /var/log/app/%(script_name)s.log 2>&1"
+ExecStart=/bin/bash -ce "source /tmp/envvars && %(script)s >> /var/log/app/%(script_name)s.log 2>&1"
 
 [Install]
 WantedBy=multi-user.target
