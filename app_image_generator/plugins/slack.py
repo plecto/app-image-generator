@@ -6,9 +6,10 @@ from app_image_generator.plugins.base import BasePlugin
 class SlackPlugin(BasePlugin):
     def __init__(self):
         self.slacker = Slacker(os.environ.get("SLACK_TOKEN"))
+        self.channel = os.environ.get("SLACK_CHANNEL")
 
     def build_succeeded(self, app, output):
-        self.slacker.chat.post_message('#dev', 'New %s images available:' % app, username='app-image-generator', attachments=[
+        self.slacker.chat.post_message(self.channel or '#dev', 'New %s images available:' % app, username='app-image-generator', attachments=[
             {
                 "fields": [
                     {
@@ -21,7 +22,7 @@ class SlackPlugin(BasePlugin):
         ])
 
     def build_failed(self, app, output):
-        self.slacker.chat.post_message('#dev', 'Building %s failed!!!!' % app, username='app-image-generator', attachments=[
+        self.slacker.chat.post_message(self.channel or '#dev', 'Building %s failed!!!!' % app, username='app-image-generator', attachments=[
             {
                 "fields": [
                     {
