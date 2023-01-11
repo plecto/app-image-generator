@@ -1,4 +1,4 @@
-import os
+import os, requests
 from app_image_generator.plugins.base import BasePlugin
 
 
@@ -7,7 +7,7 @@ class SlackPlugin(BasePlugin):
         self.webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
 
     def build_succeeded(self, app, output):
-        requests.post(self.webhook_url, data({
+        requests.post(self.webhook_url, data={
             "attachments": [{
                 "pretext": f"New {app} images available",
                 "fields": [
@@ -18,12 +18,12 @@ class SlackPlugin(BasePlugin):
                     } for image_name, image_id in self.get_images_from_output(output).items()
                 ],
             }]
-        }))
+        })
 
     def build_failed(self, app, output):
-        requests.post(self.webhook_url, data({
+        requests.post(self.webhook_url, data={
             "attachments": [{
-                "pretext": f"Building %s failed!!!!",
+                "pretext": f"Building {app} failed!!!!",
                 "color": "#F35A00",
                 "fields": [
                     {
@@ -33,4 +33,4 @@ class SlackPlugin(BasePlugin):
                     } for image_name, image_id in self.get_images_from_output(output).items()
                 ],
             }]
-        }))
+        })
