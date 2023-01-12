@@ -1,16 +1,15 @@
-import os
-from slacker import Slacker
+import os, requests
 from app_image_generator.plugins.base import BasePlugin
 
 
 class SlackPlugin(BasePlugin):
     def __init__(self):
-        self.slacker = Slacker(os.environ.get("SLACK_TOKEN"))
-        self.channel = os.environ.get("SLACK_CHANNEL")
+        self.webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
 
     def build_succeeded(self, app, output):
-        self.slacker.chat.post_message(self.channel or '#dev', 'New %s images available:' % app, username='app-image-generator', attachments=[
-            {
+        requests.post(self.webhook_url, data={
+            "attachments": [{
+                "pretext": f"New {app} images available",
                 "fields": [
                     {
                         "title": image_name,
@@ -18,12 +17,14 @@ class SlackPlugin(BasePlugin):
                         "short": True
                     } for image_name, image_id in self.get_images_from_output(output).items()
                 ],
-            }
-        ])
+            }]
+        })
 
     def build_failed(self, app, output):
-        self.slacker.chat.post_message(self.channel or '#dev', 'Building %s failed!!!!' % app, username='app-image-generator', attachments=[
-            {
+        requests.post(self.webhook_url, data={
+            "attachments": [{
+                "pretext": f"Building {app} failed!!!!",
+                "color": "#F35A00",
                 "fields": [
                     {
                         "title": image_name,
@@ -31,6 +32,5 @@ class SlackPlugin(BasePlugin):
                         "short": True
                     } for image_name, image_id in self.get_images_from_output(output).items()
                 ],
-                "color": "#F35A00"
-            }
-        ])
+            }]
+        })
