@@ -7,7 +7,7 @@ class SlackPlugin(BasePlugin):
         self.webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
 
     def build_succeeded(self, app, output):
-        requests.post(self.webhook_url, data={
+        requests.post(self.webhook_url, json={
             "attachments": [{
                 "pretext": f"New {app} images available",
                 "fields": [
@@ -21,7 +21,7 @@ class SlackPlugin(BasePlugin):
         })
 
     def build_failed(self, app, output):
-        requests.post(self.webhook_url, data={
+        requests.post(self.webhook_url, json={
             "attachments": [{
                 "pretext": f"Building {app} failed!!!!",
                 "color": "#F35A00",
