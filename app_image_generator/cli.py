@@ -78,7 +78,7 @@ def main():
             kwargs['amis'] = [deployment for deployment, f in env_script_dict]
         return_code = run(files=[
             {
-                'content': systemd_script_template(kwargs['script'][0], "-".join([kwargs['app'], environment]),
+                'content': systemd_script_template(f, "-".join([kwargs['app'], environment]),
                                                    kwargs.get('maintainer', 'Unknown')),
                 'filename': "/etc/systemd/system/%s.service" % "-".join([kwargs['app'], environment]),
                 'systemd_service_name': kwargs['app'],
