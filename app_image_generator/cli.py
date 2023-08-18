@@ -74,26 +74,18 @@ def main():
     )
     if len(run_kwargs['script']) > 1:  # Multiple upstart-scripts
         env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])
-        if run_kwargs['single_image']:  # Put all upstart-files in the same AMI
-            run(files=[
-                {
-                    'content': upstart_script_template(f, "-".join([kwargs['app'], environment]), kwargs.get('maintainer', 'Unknown')),
-                    'filename': "/etc/init/%s.conf" % "-".join([kwargs['app'], environment]),
-                }
-                for environment, f in env_script_dict],
-                **kwargs
-            )
-        else:  # Put all upstart-files in separate AMIs
+        if not run_kwargs['single_image']:  # Put all upstart-files in the same AMI
             kwargs['amis'] = [deployment for deployment, f in env_script_dict]
-            run(files=[
-                {
-                    'content': upstart_script_template(f, "-".join([kwargs['app'], environment]), kwargs.get('maintainer', 'Unknown')),
-                    'filename': "/etc/init/%s.conf" % "-".join([kwargs['app'], environment]),
-                    'deployment': environment,
-                }
-                for environment, f in env_script_dict],
-                **kwargs
-            )
+        return_code = run(files=[
+            {
+                'content': systemd_script_template(kwargs['script'][0], "-".join([kwargs['app'], environment]),
+                                                   kwargs.get('maintainer', 'Unknown')),
+                'filename': "/etc/systemd/system/%s.service" % "-".join([kwargs['app'], environment]),
+                'systemd_service_name': kwargs['app'],
+            }
+            for environment, f in env_script_dict],
+            **kwargs
+        )
     else:  # Single script and single AMI!
         return_code = run(files=[
             {
@@ -102,4 +94,4 @@ def main():
                 'systemd_service_name': kwargs['app'],
             }
         ], **kwargs)
-        exit(return_code)
+    exit(return_code)
