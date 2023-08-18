@@ -1,2 +1,4 @@
 dist/*
 app_image_generator.egg-info/*
+.idea
+.virtualenvs
