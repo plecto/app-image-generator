@@ -81,7 +81,7 @@ def main():
                 'content': systemd_script_template(f, "-".join([kwargs['app'], environment]),
                                                    kwargs.get('maintainer', 'Unknown')),
                 'filename': "/etc/systemd/system/%s.service" % "-".join([kwargs['app'], environment]),
-                'systemd_service_name': kwargs['app'],
+                'systemd_service_name': "-".join([kwargs['app'], environment]),
             }
             for environment, f in env_script_dict],
             **kwargs
