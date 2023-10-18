@@ -73,7 +73,7 @@ def main():
         plugins=plugins
     )
     if len(run_kwargs['script']) > 1:  # Multiple upstart-scripts
-        env_script_dict = zip(run_kwargs['deployment_name'], run_kwargs['script'])
+        env_script_dict = list(zip(run_kwargs['deployment_name'], run_kwargs['script']))
         if not run_kwargs['single_image']:  # Put all upstart-files in the same AMI
             kwargs['amis'] = [deployment for deployment, f in env_script_dict]
         return_code = run(files=[
@@ -95,3 +95,5 @@ def main():
             }
         ], **kwargs)
     exit(return_code)
+
+main()
