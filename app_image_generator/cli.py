@@ -82,6 +82,7 @@ def main():
                                                    kwargs.get('maintainer', 'Unknown')),
                 'filename': "/etc/systemd/system/%s.service" % "-".join([kwargs['app'], environment]),
                 'systemd_service_name': "-".join([kwargs['app'], environment]),
+                'deployment': environment,
             }
             for environment, f in env_script_dict],
             **kwargs
